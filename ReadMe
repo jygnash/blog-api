@@ -1,0 +1,4 @@
+Using Postgres DB Terminal Console
+> psql -U riu364 (provide password temp)
+> \d show the list of the database objects
+> \dt shows the list of tables

@@ -1,0 +1,121 @@
+CREATE SEQUENCE public.tag_sequence
+    INCREMENT 1
+    START 1
+    MINVALUE 1
+    MAXVALUE 9223372036854775807
+    CACHE 1;
+    
+CREATE SEQUENCE public.blog_sequence
+    INCREMENT 1
+    START 1
+    MINVALUE 1
+    MAXVALUE 9223372036854775807
+    CACHE 1;
+
+ALTER SEQUENCE public.blog_sequence
+    OWNER TO riu364;
+    
+CREATE SEQUENCE public.hibernate_sequence
+    INCREMENT 1
+    START 1
+    MINVALUE 1
+    MAXVALUE 9223372036854775807
+    CACHE 1;
+
+ALTER SEQUENCE public.hibernate_sequence
+    OWNER TO riu364;
+    
+CREATE SEQUENCE public.users_session_sequence
+    INCREMENT 1
+    START 1
+    MINVALUE 1
+    MAXVALUE 9223372036854775807
+    CACHE 1;
+
+ALTER SEQUENCE public.users_session_sequence
+    OWNER TO riu364;    
+-- Table: public.blogs
+
+-- DROP TABLE public.blogs;
+
+CREATE TABLE public.blogs
+(
+    blog_post character varying COLLATE pg_catalog."default" NOT NULL,
+    blog_id numeric NOT NULL,
+    blog_description character varying COLLATE pg_catalog."default",
+    user_name character varying(50) COLLATE pg_catalog."default" NOT NULL,
+    CONSTRAINT blogs_pkey PRIMARY KEY (blog_id),
+    CONSTRAINT fk96gi3awy0j7bhdhrdp0vajkm7 FOREIGN KEY (user_name)
+        REFERENCES public.users (user_name) MATCH SIMPLE
+        ON UPDATE NO ACTION
+        ON DELETE NO ACTION,
+    CONSTRAINT foriegn_key_users FOREIGN KEY (user_name)
+        REFERENCES public.users (user_name) MATCH SIMPLE
+        ON UPDATE NO ACTION
+        ON DELETE NO ACTION
+)
+WITH (
+    OIDS = FALSE
+)
+TABLESPACE pg_default;
+
+ALTER TABLE public.blogs
+    OWNER to riu364;
+
+COMMENT ON CONSTRAINT foriegn_key_users ON public.blogs
+    IS 'user_name linked here';
+
+-- Index: fki_foriegn_key_users
+
+-- DROP INDEX public.fki_foriegn_key_users;
+
+CREATE INDEX fki_foriegn_key_users
+    ON public.blogs USING btree
+    (user_name COLLATE pg_catalog."default")
+    TABLESPACE pg_default;
+    
+
+-- Table: public.users
+-- DROP TABLE public.users;
+
+CREATE TABLE public.users
+(
+    user_name character varying(50) COLLATE pg_catalog."default" NOT NULL,
+    password character varying(50) COLLATE pg_catalog."default" NOT NULL,
+    user_type character varying(20) COLLATE pg_catalog."default",
+    CONSTRAINT users_pkey PRIMARY KEY (user_name)
+)
+WITH (
+    OIDS = FALSE
+)
+TABLESPACE pg_default;
+
+ALTER TABLE public.users
+    OWNER to riu364;
+    
+DROP TABLE public.users_session;   
+	CREATE TABLE public.users_session 
+	(    
+		session_id numeric NOT NULL,
+		logon_ts timestamp NOT NULL,
+		logout_ts timestamp,
+		user_name character varying(50) NOT NULL,
+		CONSTRAINT users_session_pkey PRIMARY KEY (session_id),
+	    CONSTRAINT fk_users_sessions_user FOREIGN KEY (user_name)
+	        REFERENCES public.users (user_name) MATCH SIMPLE
+	        ON UPDATE NO ACTION
+	        ON DELETE NO ACTION
+	)
+
+DROP TABLE public.tags;   
+CREATE TABLE public.tags
+(    
+	tag_id numeric NOT NULL,
+	tag_name character varying(50) NOT NULL,
+	blog_id numeric NOT NULL,
+	CONSTRAINT tag_id_pk PRIMARY KEY (tag_id),
+	CONSTRAINT fk_tags_blogs FOREIGN KEY (blog_id)
+	REFERENCES public.blogs (blog_id) MATCH SIMPLE
+        ON UPDATE NO ACTION
+        ON DELETE NO ACTION
+)
